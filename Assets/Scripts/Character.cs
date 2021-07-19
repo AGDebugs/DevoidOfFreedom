@@ -5,62 +5,87 @@ using UnityEngine.UI;
 
 public class Character : MonoBehaviour
 {
+    // Canvas
+    [SerializeField] private GameObject playerUI;
     // Movement stuff
-    [SerializeField]
-    private float speed = 5;
+    [Tooltip("Speed of the Player. Default: 5")]
+    [SerializeField] private float speed = 5;
     private Vector3 myPos;
     private float horizontalInput;
     private float verticalInput;
     CharacterController controller;
     
     // Inventory mechanic to be implemented in future
-    public GameObject Inventory;
+    private GameObject Inventory;
     
     //Flashlight
-    [SerializeField]
     private GameObject flashlight;
     private bool flashStatus = false;
     
     // Animation Stuff
-    public GameObject leftarm;
-    public GameObject rightarm;
+    private GameObject leftarm;
+    private GameObject rightarm;
     
     // Weaponry
-    public GameObject PrimaryWeps;
-    public GameObject SecondaryWeps;
-    public GameObject GunWeps;
-    public Image PWepUI;
-    public Image SWepUI;
-    public Image GWepUI;
+    private GameObject PrimaryWeps;
+    private GameObject SecondaryWeps;
+    private GameObject GunWeps;
+    private Image PWepUI;
+    private Image SWepUI;
+    private Image GWepUI;
     
-    public GameObject CurrentPrimary;
-    public GameObject CurrentSecondary;
-    public GameObject CurrentGun;
-    public GameObject CurrentWeapon;
+    private GameObject CurrentPrimary;
+    private GameObject CurrentSecondary;
+    private GameObject CurrentGun;
+    private GameObject CurrentWeapon;
     private WeaponBehavior CurrentBehavior;
     
     // Dash mechanic
-    public GameObject loadingUI;
-    public Text dashval;
+    private GameObject loadingUI;
+    private Text dashval;
     private Vector3 moveDirection;
-    public int dashes = 3;
+    [Tooltip("Number of dashes. Default: 3")]
+    [SerializeField] private int dashes = 3;
     private bool dashoncd = false;
-    public float dashDistance = 10;
+    [Tooltip("Distance of the dash. Default: 10")]
+    [SerializeField] private float dashDistance = 10;
     private bool dashflag = false;
     float dashSpeed = 6;
     
     // Heath Mechanics
-    public int health;
-    public Text healthval;
-    public Image healthbar;
+    [Tooltip("Health of the Player. Default: 100")]
+    [SerializeField] int health;
+    private Text healthval;
+    private Image healthbar;
     private int healthtot;
-    public Material damaged;
-    public Material original;
+    private Material damaged;
+    private Material original;
     private bool invincibility = false;
-    public GameObject gameover;
+    private GameObject gameover;
 
     void Start()
     {
+        Inventory = playerUI.transform.GetChild(3).gameObject;
+        leftarm = transform.GetChild(0).gameObject;
+        rightarm = transform.GetChild(1).gameObject;
+        PrimaryWeps = rightarm.transform.GetChild(0).GetChild(0).GetChild(0).gameObject;
+        SecondaryWeps = rightarm.transform.GetChild(0).GetChild(0).GetChild(1).gameObject;
+        GunWeps = rightarm.transform.GetChild(0).GetChild(0).GetChild(2).gameObject;
+        flashlight = leftarm.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).gameObject;
+        PWepUI = playerUI.transform.GetChild(0).GetChild(1).GetComponent<Image>();
+        SWepUI = playerUI.transform.GetChild(0).GetChild(2).GetComponent<Image>();
+        GWepUI = playerUI.transform.GetChild(0).GetChild(3).GetComponent<Image>();
+        CurrentPrimary = PrimaryWeps.transform.GetChild(0).gameObject;
+        CurrentSecondary = SecondaryWeps.transform.GetChild(0).gameObject;
+        CurrentGun = GunWeps.transform.GetChild(0).gameObject;
+        CurrentWeapon = CurrentSecondary;
+        loadingUI = playerUI.transform.GetChild(1).GetChild(1).gameObject;
+        dashval = playerUI.transform.GetChild(1).GetChild(0).GetComponent<Text>();
+        healthval = playerUI.transform.GetChild(2).GetChild(1).GetComponent<Text>();
+        healthbar = playerUI.transform.GetChild(2).GetChild(0).GetComponent<Image>();
+        damaged = Resources.Load("Materials/RedDamaged", typeof(Material)) as Material;
+        original = Resources.Load("Materials/Red", typeof(Material)) as Material;
+        gameover = playerUI.transform.GetChild(4).gameObject;
         healthtot = health;
         controller = GetComponent<CharacterController>();
         InvokeRepeating("DashRegen", 1, 1);
